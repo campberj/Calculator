@@ -21,11 +21,79 @@ namespace Calculator
     public partial class MainWindow : Window
     {
         double lastNumber, result;
+        SelectedOperator selectedOperator;
 
         public MainWindow()
         {
             InitializeComponent();
-            resultLabel.Content = "1242";
+            resultLabel.Content = "0";
+
+        }
+
+        private void DecimalButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(resultLabel.Content.ToString().Contains(".")))
+            {
+                resultLabel.Content += ".";
+            }
+           
+        }
+
+        private void equalsButton_Click(object sender, RoutedEventArgs e)
+        {
+            double newNumber;
+
+            if(double.TryParse(resultLabel.Content.ToString(), out newNumber))
+            {
+                switch(selectedOperator)
+                {
+                    case SelectedOperator.Addition:
+                       result = SimpleMath.Add(lastNumber, newNumber);
+                        break;
+
+                    case SelectedOperator.Subtraction:
+                        result = SimpleMath.Subtract(lastNumber, newNumber);
+                        break;
+
+                    case SelectedOperator.Multiplication:
+                        result = SimpleMath.Multiply(lastNumber, newNumber);
+                        break;
+
+                    case SelectedOperator.Division:
+                        result = SimpleMath.Divide(lastNumber, newNumber);
+                        break;
+
+                }
+
+                resultLabel.Content = result.ToString();
+            }
+
+        }
+
+        private void OperationButton_Click(object sender, RoutedEventArgs e)
+        {
+                if (double.TryParse(resultLabel.Content.ToString(), out lastNumber))
+                {
+                    resultLabel.Content = "0";
+
+                }
+
+                if(sender == multiplicationButton)
+                {
+                    selectedOperator = SelectedOperator.Multiplication;
+                }
+                if(sender == divisionButton)
+                {
+                    selectedOperator = SelectedOperator.Division;
+                }
+                if (sender == additionButton)
+                {
+                    selectedOperator = SelectedOperator.Addition;
+                }
+                if (sender == subtractionButton)
+                {
+                    selectedOperator = SelectedOperator.Subtraction;
+                }
 
         }
 
@@ -74,31 +142,6 @@ namespace Calculator
             }
         }
 
-        private void additionButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void multiplicationButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void divisionButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void decimalButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void equalsButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void negativeButton_Click(object sender, RoutedEventArgs e)
         {
             if(double.TryParse(resultLabel.Content.ToString(), out lastNumber))
@@ -122,5 +165,43 @@ namespace Calculator
             resultLabel.Content = "0";
         }
         #endregion
+    }
+
+    public enum SelectedOperator
+    {
+        Addition,
+        Subtraction,
+        Multiplication,
+        Division
+    }
+
+    public class SimpleMath
+    {
+        public static double Add(double n1, double n2)
+        {
+            return n1 + n2;
+        }
+
+        public static double Subtract(double n1, double n2)
+        {
+            return n1 - n2;
+        }
+
+        public static double Multiply(double n1, double n2)
+        {
+            return n1 * n2;
+        }
+
+        public static double Divide(double n1, double n2)
+        {
+            if (n2 == 0)
+            {
+                MessageBox.Show("Division by zero is not supported.", "Wrong operation", MessageBoxButton.OK,MessageBoxImage.Error);
+
+                return 0;
+            }
+
+            return n1 / n2;
+        }
     }
 }
